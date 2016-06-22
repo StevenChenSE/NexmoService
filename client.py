@@ -75,7 +75,7 @@ def submit(request_id,code,ip=None):
 		status['error_text']=None
 	return CheckResponce(status['status'],status['error_text'])
 if __name__ == '__main__':
-	c=make_request('+8613220178615')
+	c=make_request('PHONE NUMBER')
 	print c
 	cancel(c.request_id)
 
