@@ -18,8 +18,6 @@ import client
 class NexmoField(forms.CharField):
 
     def __init__(self,*args, **kwargs):
-        """
-        """
         super(NexmoField, self).__init__(*args, **kwargs)
 
     def clean(self,values):

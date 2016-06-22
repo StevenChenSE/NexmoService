@@ -1,6 +1,8 @@
 #NexmoService
 This is a simple django app that wrapps [Nexmo sevice API](https://docs.nexmo.com/).
+
 client.py wrapps the Nexmo API and you shoud set your keys there.
+
 fields.py implements a django forms.Charfield which cleans itself using the client API.
 ##Usage
 	if __name__ == '__main__':
