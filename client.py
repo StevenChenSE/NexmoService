@@ -1,20 +1,14 @@
 import urllib,json
 from django.conf import settings
 from django.utils.encoding import smart_str
+from keys import API_SECRET,API_KEY
 
 NEXMO_REQUEST_URL='https://api.nexmo.com/verify/json?'
 NEXMO_CHECK_URL='https://api.nexmo.com/verify/check/json?'
+NEXMO_CONTROL_URL='https://api.nexmo.com/verify/control/json?'
 # account settings here
-DEFAULT_BRAND='NEXMOTEST'
-DEFAULT_API_KEY='YOUR API KEY'
-DEFAULT_API_SECRET='YOUR API SECRET'
-WAIT_TIME=60
-#API_KEY=getattr(settings, "API_KEY",DEFAULT_API_KEY)
-#API_SECRET=getattr(settings, "API_SECRET",DEFAULT_API_KEY)
-#BRAND=getattr(settings, "BRAND",DEFAULT_BRAND)
-API_KEY=DEFAULT_API_KEY
-API_SECRET=DEFAULT_API_SECRET
-BRAND=DEFAULT_BRAND
+WAIT_TIME=300
+BRAND='TESTNEXMO'
 
 class CheckResponce(object):
     def __init__(self, status, error_text=None):
@@ -31,7 +25,9 @@ class RequestResponce(object):
 	def __str__(self):
 		return "request_id=%s status=%d error_text=%s"%(self.request_id,self.status,self.error_text)
 		
+		
 def make_request(phoneNumber):
+	'make a request,return a RequestResponce'
 	params = {
 	    'api_key': API_KEY,
 	    'api_secret': API_SECRET,
@@ -47,7 +43,23 @@ def make_request(phoneNumber):
 	if 'request_id' not in status:
 		status['request_id']='no_id'
 	return RequestResponce(status['request_id'],status['status'],status['error_text'])
+	
+def cancel(request_id):
+	'return an integer,0 for success'
+	params = {
+	    'api_key': API_KEY,
+	    'api_secret': API_SECRET,
+	    'request_id': request_id,
+	    'cmd':'cancel'
+	}
+	url=NEXMO_CONTROL_URL+urllib.urlencode(params)
+	response=urllib.urlopen(url)
+	status=int(json.loads(smart_str(response.read()))['status'])
+	return status
+
+
 def submit(request_id,code,ip=None):
+	'check code,return a CheckResponce'
 	params = {
     'api_key': API_KEY,
     'api_secret': API_SECRET,
@@ -56,10 +68,14 @@ def submit(request_id,code,ip=None):
 	}
 	if ip:
 		params['ip_address']=ip
-	url = 'https://api.nexmo.com/verify/check/json?' + urllib.urlencode(params)
+	url = NEXMO_CHECK_URL + urllib.urlencode(params)
 	response = urllib.urlopen(url)
 	status=json.loads(smart_str(response.read()))
 	if 'error_text' not in status:
 		status['error_text']=None
 	return CheckResponce(status['status'],status['error_text'])
+if __name__ == '__main__':
+	c=make_request('+8613220178615')
+	print c
+	cancel(c.request_id)
 

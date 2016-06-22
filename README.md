@@ -1,10 +1,15 @@
 #NexmoService
 This is a simple django app that wrapps [Nexmo sevice API](https://docs.nexmo.com/).
 
-client.py wrapps the Nexmo API and you shoud set your keys there.
+client.py wrapps the Nexmo API.
 
 fields.py implements a django forms.Charfield which cleans itself using the client API.
-##Usage
+###How to set your keys(update)
+Add a simple keys.py in the folder which contains:
+
+	API_KEY='YOUR API_KEY'
+	API_SECRET='YOUR API_SECRET'
+###Usage
 	if __name__ == '__main__':
     responce=client.make_request('YOUR PHONE NUMBER')
     if responce.status==0:
